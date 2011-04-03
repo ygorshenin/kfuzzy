@@ -1,11 +1,11 @@
 #ifdef HOME
-
 #include <gflags/gflags.h>
 #include <gtest/gtest.h>
 
 DEFINE_bool(run_all_tests, false, "run all tests");
-
 #endif
+
+#include "math/vector.hpp"
 
 
 int main(int argc, char **argv) {

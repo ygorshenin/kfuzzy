@@ -1,7 +1,10 @@
 kfuzzy: kfuzzy.o
 	g++ -o kfuzzy kfuzzy.o -L/usr/local/lib -lgflags -lgtest
 
-kfuzzy.o: kfuzzy.cc
+tests: kfuzzy
+	./kfuzzy --run_all_tests
+
+kfuzzy.o: kfuzzy.cc math/vector.hpp
 	g++ -DHOME -g -o kfuzzy.o -c kfuzzy.cc
 
 clear:
