@@ -1,2 +1,6 @@
 # ignore Emacs backup files
 *~
+.\#*
+\#*\#
+*.o
+kfuzzy
