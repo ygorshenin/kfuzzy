@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iterator>
 #include <limits>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -118,53 +119,57 @@ namespace algo {
 
 #ifdef HOME
   class TestMostDistantStrategy: public ::testing::Test {
+  protected:
+    void SetUp(void) {
+      strategy_.reset(new algo::MostDistantStrategy<math::Vector>());
+    }
+
+    std::auto_ptr<algo::MostDistantStrategy<math::Vector> > strategy_;
   };
 
   TEST_F(TestMostDistantStrategy, TestIncorrect) {
-    algo::MostDistantStrategy<math::Vector> strategy;
-
     vector<int> result;
-    EXPECT_FALSE(strategy.Find(vector<math::Vector>(), -1, &result));
-    EXPECT_FALSE(strategy.Find(vector<math::Vector>(), 1, &result));
-    EXPECT_FALSE(strategy.Find(vector<math::Vector>(), 2, &result));
+
+    EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), -1, &result));
+    EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), 1, &result));
+    EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), 2, &result));
 
     const int kSize = 10;
     math::Vector v(2);
     vector<math::Vector> vectors(kSize, v);
-    EXPECT_FALSE(strategy.Find(vectors, -10, &result));
-    EXPECT_FALSE(strategy.Find(vectors, kSize + 1, &result));
-    EXPECT_FALSE(strategy.Find(vectors, 2 * kSize, &result));
+    EXPECT_FALSE(strategy_->Find(vectors, -10, &result));
+    EXPECT_FALSE(strategy_->Find(vectors, kSize + 1, &result));
+    EXPECT_FALSE(strategy_->Find(vectors, 2 * kSize, &result));
   }
 
   TEST_F(TestMostDistantStrategy, TestZero) {
-    algo::MostDistantStrategy<math::Vector> strategy;
     vector<int> result;
-    EXPECT_TRUE(strategy.Find(vector<math::Vector>(), 0, &result));
+
+    ASSERT_TRUE(strategy_->Find(vector<math::Vector>(), 0, &result));
     EXPECT_EQ(0u, result.size());
 
-    EXPECT_TRUE(strategy.Find(vector<math::Vector>(10, math::Vector(2)), 0, &result));
+    ASSERT_TRUE(strategy_->Find(vector<math::Vector>(10, math::Vector(2)), 0, &result));
     EXPECT_EQ(0u, result.size());
   }
 
   TEST_F(TestMostDistantStrategy, TestOne) {
-    algo::MostDistantStrategy<math::Vector> strategy;
     vector<int> result;
 
-    EXPECT_TRUE(strategy.Find(vector<math::Vector>(1, math::Vector(3)), 1, &result));
+    ASSERT_TRUE(strategy_->Find(vector<math::Vector>(1, math::Vector(3)), 1, &result));
     ASSERT_EQ(1u, result.size());
-    ASSERT_EQ(0, result[0]);
+    EXPECT_EQ(0, result[0]);
 
     const int kSize = 16;
-    EXPECT_TRUE(strategy.Find(vector<math::Vector>(kSize, math::Vector(2)), 1, &result));
+    ASSERT_TRUE(strategy_->Find(vector<math::Vector>(kSize, math::Vector(2)), 1, &result));
     ASSERT_EQ(1u, result.size());
-    ASSERT_TRUE(result[0] >= 0 && result[0] < kSize);
+    EXPECT_TRUE(result[0] >= 0 && result[0] < kSize);
   }
 
   TEST_F(TestMostDistantStrategy, TestTwo) {
-    algo::MostDistantStrategy<math::Vector> strategy;
     vector<int> result;
+
     vector<math::Vector> vectors(2, math::Vector(3));
-    EXPECT_TRUE(strategy.Find(vectors, 2, &result));
+    ASSERT_TRUE(strategy_->Find(vectors, 2, &result));
     ASSERT_EQ(2u, result.size());
     EXPECT_TRUE((result[0] == 0 && result[1] == 1) || (result[0] == 1 && result[1] == 0));
 
@@ -175,9 +180,54 @@ namespace algo {
     vectors[0] = u;
     vectors[1] = v;
     vectors[2] = w;
-    EXPECT_TRUE(strategy.Find(vectors, 2, &result));
+    ASSERT_TRUE(strategy_->Find(vectors, 2, &result));
     ASSERT_EQ(2u, result.size());
     EXPECT_TRUE((result[0] == 1 && result[1] == 2) || (result[0] == 2 && result[1] == 1));
+  }
+
+  TEST_F(TestMostDistantStrategy, TestManyAllEqual) {
+    const int kSize = 4;
+    vector<int> result;
+    vector<math::Vector> vectors(kSize, math::Vector(2));
+    EXPECT_TRUE(strategy_->Find(vectors, kSize, &result));
+    ASSERT_EQ(kSize, result.size());
+    std::sort(result.begin(), result.end());
+    EXPECT_EQ(0, result[0]);
+    EXPECT_EQ(1, result[1]);
+    EXPECT_EQ(2, result[2]);
+    EXPECT_EQ(3, result[3]);
+  }
+
+  TEST_F(TestMostDistantStrategy, TestManyFour) {
+    const int kSize = 4;
+    vector<int> result;
+    vector<math::Vector> vectors(kSize, math::Vector(2));
+    vectors[0][0] = -1.0, vectors[0][1] = 0.0;
+    vectors[1][0] = +1.0, vectors[1][1] = 2.0;
+    vectors[2][0] = +4.0, vectors[2][1] = 2.0;
+    vectors[3][0] = -1.0, vectors[3][1] = -1.0;
+
+    ASSERT_TRUE(strategy_->Find(vectors, 0, &result));
+    EXPECT_EQ(0u, result.size());
+
+    ASSERT_TRUE(strategy_->Find(vectors, 1, &result));
+    ASSERT_EQ(1u, result.size());
+    EXPECT_TRUE(result[0] >= 0 && result[0] < kSize);
+
+    ASSERT_TRUE(strategy_->Find(vectors, 2, &result));
+    ASSERT_EQ(2u, result.size());
+    std::sort(result.begin(), result.end());
+    EXPECT_TRUE(result[0] == 2 && result[1] == 3);
+
+    ASSERT_TRUE(strategy_->Find(vectors, 3, &result));
+    ASSERT_EQ(3u, result.size());
+    std::sort(result.begin(), result.end());
+    EXPECT_TRUE(result[0] == 1 && result[1] == 2 && result[2] == 3);
+
+    ASSERT_TRUE(strategy_->Find(vectors, 4, &result));
+    ASSERT_EQ(4u, result.size());
+    std::sort(result.begin(), result.end());
+    EXPECT_TRUE(result[0] == 0 && result[1] == 1 && result[2] == 2 && result[3] == 3);
   }
 #endif
 } // namespace algo
