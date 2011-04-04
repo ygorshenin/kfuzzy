@@ -117,5 +117,24 @@ namespace math {
     EXPECT_DOUBLE_EQ(0.0, v.Distance(Vector(2)));
   }
 
+  TEST_F(TestVector, TestAssignment) {
+    const int kSize = 5;
+    const double kValues[kSize] = { -4.0, 3.75, 2.871, -22.2, 2.182 };
+
+    Vector u(kSize);
+    for (int i = 0; i < kSize; ++i)
+      u[i] = kValues[i];
+    Vector v(kSize), w(kSize);
+    w = v = u;
+    for (int i = 0; i < kSize; ++i) {
+      u[i] = 0.0;
+      EXPECT_DOUBLE_EQ(kValues[i], v[i]);
+      EXPECT_DOUBLE_EQ(kValues[i], w[i]);
+    }
+    v = v;
+    for (int i = 0; i < kSize; ++i)
+      EXPECT_DOUBLE_EQ(kValues[i], v[i]);
+  }
+
 #endif
 };
