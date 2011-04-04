@@ -5,6 +5,7 @@
 DEFINE_bool(run_all_tests, false, "run all tests");
 #endif
 
+#include "algo/strategy.hpp"
 #include "math/vector.h"
 
 

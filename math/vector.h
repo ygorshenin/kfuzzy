@@ -23,7 +23,7 @@ namespace math {
     int Size(void) const;
     Type Distance(const Vector &other) const;
 
-    Vector& operator = (const Vector &other) const;
+    Vector& operator = (const Vector &other);
     Type& operator [] (int index);
     const Type& operator [] (int index) const;
 

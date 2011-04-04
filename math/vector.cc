@@ -33,6 +33,12 @@ namespace math {
     return components_[index];
   }
 
+  Vector& Vector::operator = (const Vector &other) {
+    if (this != &other)
+      components_ = other.components_;
+    return *this;
+  }
+
   bool Vector::EQ(Vector::Type u, Vector::Type v) {
     return abs(u - v) < kEpsilon;
   }
