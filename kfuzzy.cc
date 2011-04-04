@@ -5,7 +5,7 @@
 DEFINE_bool(run_all_tests, false, "run all tests");
 #endif
 
-#include "math/vector.hpp"
+#include "math/vector.h"
 
 
 int main(int argc, char **argv) {
