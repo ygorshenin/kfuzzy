@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   reader.Read(std::cin, &num_objects, &num_dimensions, &num_clusters, &objects);
 
   std::vector<int> indexes;
-  algo::KFuzzyAlgorithm<math::Vector, algo::MostDistantStrategy> algo;
+  algo::KFuzzyAlgorithm<math::Vector> algo;
   algo.Clusterize(num_objects, num_dimensions, num_clusters, objects, &indexes);
   return 0;
 }
