@@ -5,6 +5,7 @@
 DEFINE_bool(run_all_tests, false, "run all tests");
 #endif
 
+#include "algo/kfuzzy.hpp"
 #include "algo/strategy.hpp"
 #include "io/reader.hpp"
 #include "math/vector.h"
@@ -26,5 +27,9 @@ int main(int argc, char **argv) {
 
   io::TABReader<math::Vector> reader;
   reader.Read(std::cin, &num_objects, &num_dimensions, &num_clusters, &objects);
+
+  std::vector<int> indexes;
+  algo::KFuzzyAlgorithm<math::Vector, algo::MostDistantStrategy> algo;
+  algo.Clusterize(num_objects, num_dimensions, num_clusters, objects, &indexes);
   return 0;
 }
