@@ -30,6 +30,6 @@ int main(int argc, char **argv) {
 
   std::vector<int> indexes;
   algo::KFuzzyAlgorithm<math::Vector> algo;
-  algo.Clusterize(num_objects, num_dimensions, num_clusters, objects, &indexes);
+  algo.Clusterize(num_objects, num_dimensions, num_clusters, objects, 1.0, &indexes);
   return 0;
 }

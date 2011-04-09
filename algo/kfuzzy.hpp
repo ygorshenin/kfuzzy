@@ -9,7 +9,7 @@ namespace algo {
   template<class V, template<class U> class DistantStrategy = algo::MostDistantStrategy>
   class KFuzzyAlgorithm : public DistantStrategy<V> {
   public:
-    bool Clusterize(int num_objects, int num_dimensions, int num_clusters, const vector<V> &objects, vector<int> *indexes) {
+    bool Clusterize(int num_objects, int num_dimensions, int num_clusters, const vector<V> &objects, double b, vector<int> *indexes) {
       return true;
     }
   }; // class KFuzzyAlgorithm
