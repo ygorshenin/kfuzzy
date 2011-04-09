@@ -8,8 +8,8 @@
 
 
 namespace math {
-  const Vector::Type Vector::kZero;
-  const Vector::Type Vector::kEpsilon;
+  const Vector::Type Vector::kZero = 0.0;
+  const Vector::Type Vector::kEpsilon = 1e-9;
 
 
   Vector::Vector(int size): size_(size), components_(kZero, size) {
@@ -58,7 +58,7 @@ namespace math {
       result = largest * sqrt(result);
     }
     return result;
-  };
+  }
 
   std::istream& operator >> (std::istream &is, Vector &v) {
     for (int i = 0; i < v.Size(); ++i)
@@ -137,4 +137,4 @@ namespace math {
   }
 
 #endif
-};
+} // namespace math

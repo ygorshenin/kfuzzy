@@ -6,7 +6,11 @@ DEFINE_bool(run_all_tests, false, "run all tests");
 #endif
 
 #include "algo/strategy.hpp"
+#include "io/reader.hpp"
 #include "math/vector.h"
+
+#include <iostream>
+#include <vector>
 
 
 int main(int argc, char **argv) {
@@ -17,5 +21,15 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
   }
 #endif
+  int num_objects, num_dimensions, num_clusters;
+  std::vector<math::Vector> objects;
+
+  io::TABReader<math::Vector> reader;
+  reader.Read(std::cin, &num_objects, &num_dimensions, &num_clusters, &objects);
+
+  std::cout <<
+    "num_objects = " << num_objects << std::endl <<
+    "num_dimensions = " << num_dimensions << std::endl <<
+    "num_clusters = " << num_clusters;
   return 0;
 }

@@ -13,8 +13,8 @@ namespace math {
   public:
     typedef double Type;
 
-    static const Type kZero = 0;
-    static const Type kEpsilon = 1e-9;
+    static const Type kZero;
+    static const Type kEpsilon;
 
     Vector(int size);
     Vector(int size, const Type *components);
@@ -31,8 +31,8 @@ namespace math {
     friend std::ostream& operator << (std::ostream &os, Vector &v);
 
   private:
-    std::valarray<Type> components_;
     const int size_;
+    std::valarray<Type> components_;
 
     static bool EQ(Type u, Type v);
   }; // class Vector
