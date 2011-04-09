@@ -26,10 +26,5 @@ int main(int argc, char **argv) {
 
   io::TABReader<math::Vector> reader;
   reader.Read(std::cin, &num_objects, &num_dimensions, &num_clusters, &objects);
-
-  std::cout <<
-    "num_objects = " << num_objects << std::endl <<
-    "num_dimensions = " << num_dimensions << std::endl <<
-    "num_clusters = " << num_clusters;
   return 0;
 }
