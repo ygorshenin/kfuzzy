@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
   }
 #endif
-  int num_objects, num_dimensions, num_clusters;
+  size_t num_objects, num_dimensions, num_clusters;
   std::vector<math::Vector> objects;
 
   io::TABReader<math::Vector> reader;
@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
 
   std::vector<int> indexes;
   algo::KFuzzyAlgorithm<math::Vector> algo;
-  algo.Clusterize(num_objects, num_dimensions, num_clusters, objects, 1.0, &indexes);
+  algo::KFuzzyAlgorithm<math::Vector>::Options options;
+  options.num_clusters = num_clusters;
+  algo.Clusterize(objects, options, &indexes);
   return 0;
 }
