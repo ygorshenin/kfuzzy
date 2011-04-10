@@ -12,24 +12,24 @@ namespace math {
   const Vector::Type Vector::kEpsilon = 1e-9;
 
 
-  Vector::Vector(int size): size_(size), components_(kZero, size) {
+  Vector::Vector(size_t size): size_(size), components_(kZero, size) {
   }
 
-  Vector::Vector(int size, const Type *components): size_(size), components_(components, size) {
+  Vector::Vector(size_t size, const Type *components): size_(size), components_(components, size) {
   }
 
   Vector::Vector(const Vector &other): size_(other.Size()), components_(other.components_) {
   }
 
-  int Vector::Size(void) const {
+  size_t Vector::Size(void) const {
     return size_;
   }
 
-  Vector::Type& Vector::operator [] (int index) {
+  Vector::Type& Vector::operator [] (size_t index) {
     return components_[index];
   }
 
-  const Vector::Type& Vector::operator [] (int index) const {
+  const Vector::Type& Vector::operator [] (size_t index) const {
     return components_[index];
   }
 
@@ -45,13 +45,13 @@ namespace math {
 
   Vector::Type Vector::Distance(const Vector &other) const {
     std::valarray<Type> v(kZero, size_);
-    for (int i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i)
       v[i] = abs(components_[i] - other.components_[i]);
 
     Type largest = v.max(), result = kZero;
     if (!EQ(kZero, largest)) {
       Type tmp;
-      for (int i = 0; i < size_; ++i) {
+      for (size_t i = 0; i < size_; ++i) {
 	tmp = v[i] / largest;
 	result += tmp * tmp;
       }
@@ -61,13 +61,13 @@ namespace math {
   }
 
   std::istream& operator >> (std::istream &is, Vector &v) {
-    for (int i = 0; i < v.Size(); ++i)
+    for (size_t i = 0; i < v.Size(); ++i)
       is >> v[i];
     return is;
   }
 
   std::ostream& operator << (std::ostream &os, Vector &v) {
-    for (int i = 0; i < v.Size(); ++i)
+    for (size_t i = 0; i < v.Size(); ++i)
       os << v[i] << ' ';
     return os;
   }
@@ -77,7 +77,7 @@ namespace math {
   };
 
   TEST_F(TestVector, TestConstructor) {
-    const int kSize = 4;
+    const size_t kSize = 4u;
     Vector u(kSize);
 
     ASSERT_EQ(kSize, u.Size());
@@ -118,21 +118,21 @@ namespace math {
   }
 
   TEST_F(TestVector, TestAssignment) {
-    const int kSize = 5;
+    const size_t kSize = 5u;
     const double kValues[kSize] = { -4.0, 3.75, 2.871, -22.2, 2.182 };
 
     Vector u(kSize);
-    for (int i = 0; i < kSize; ++i)
+    for (size_t i = 0; i < kSize; ++i)
       u[i] = kValues[i];
     Vector v(kSize), w(kSize);
     w = v = u;
-    for (int i = 0; i < kSize; ++i) {
+    for (size_t i = 0; i < kSize; ++i) {
       u[i] = 0.0;
       EXPECT_DOUBLE_EQ(kValues[i], v[i]);
       EXPECT_DOUBLE_EQ(kValues[i], w[i]);
     }
     v = v;
-    for (int i = 0; i < kSize; ++i)
+    for (size_t i = 0; i < kSize; ++i)
       EXPECT_DOUBLE_EQ(kValues[i], v[i]);
   }
 
