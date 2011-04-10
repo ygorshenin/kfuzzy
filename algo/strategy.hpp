@@ -1,6 +1,8 @@
 #ifndef ALGO_STRATEGY_HPP
 #define ALGO_STRATEGY_HPP
 
+#include <cassert>
+
 #include <algorithm>
 #include <iterator>
 #include <limits>
@@ -24,33 +26,40 @@ namespace algo {
     typedef typename V::Type Type;
 
     /*
-      Finds m the most distant (from each other) vectors.  If m is
-      negative or greater than a number of given vectors, returns false.
-      Otherwise, result will contain exactly m integers, where integers
-      are indexes of corresponding vectors.
+      Finds m the most distant (from each other) vectors. If m is
+      greater than a number of given vectors, returns false.
+      Otherwise, result will contain exactly m integers, where
+      integers are indexes of corresponding vectors.
     */
-    bool Find(const vector<V> &vectors, int m, vector<int> *result) const;
+    bool Find(const vector<V> &vectors, size_t m, vector<size_t> *result) const;
 
   private:
-    typedef vector<pair<Type, int> > ContainerType;
+    typedef vector<pair<Type, size_t> > ContainerType;
     typedef typename ContainerType::iterator IteratorType;
 
 
-    void FindTwoMostDistantVectors(int n, const vector<V> &vectors, int *u, int *v) const;
+    void FindTwoMostDistantVectors(size_t n, const vector<V> &vectors, size_t *u, size_t *v) const;
 
     void Relax(IteratorType from,
 	       IteratorType to,
 	       const vector<V> &vectors,
 	       const V &v) const;
 
-    bool InternalFind(int n, const vector<V> &vectors, int m, vector<int> *result) const;
+    bool InternalFind(size_t n, const vector<V> &vectors, size_t m, vector<size_t> *result) const;
   }; // class MostDistantStrategy
 
   template<class V>
-  bool MostDistantStrategy<V>::Find(const vector<V> &vectors, int m, vector<int> *result) const {
-    int n = vectors.size();
-    if (m < 0 || m > n)
+  bool MostDistantStrategy<V>::Find(const vector<V> &vectors, size_t m, vector<size_t> *result) const {
+    size_t n = vectors.size();
+    // begin verification of user input
+    if (m > n)
       return false;
+    if (!result)
+      return false;
+    for (size_t i = 1; i < n; ++i)
+      if (vectors[i].Size() != vectors[i - 1].Size())
+    	return false;
+    // end verification of user input
     result->resize(m);
     if (m == 0)
       return true;
@@ -62,12 +71,12 @@ namespace algo {
   }
 
   template<class V>
-  void MostDistantStrategy<V>::FindTwoMostDistantVectors(int n, const vector<V> &vectors, int *u, int *v) const {
+  void MostDistantStrategy<V>::FindTwoMostDistantVectors(size_t n, const vector<V> &vectors, size_t *u, size_t *v) const {
     *u = 0, *v = 1;
     Type best = vectors[0].Distance(vectors[1]), tmp;
 
-    for (int i = 0; i < n; ++i)
-      for (int j = i + 1; j < n; ++j) {
+    for (size_t i = 0; i < n; ++i)
+      for (size_t j = i + 1; j < n; ++j) {
 	tmp = vectors[i].Distance(vectors[j]);
 	if (tmp > best) {
 	  best = tmp;
@@ -88,15 +97,15 @@ namespace algo {
   }
 
   template<class V>
-  bool MostDistantStrategy<V>::InternalFind(int n, const vector<V> &vectors, int m, vector<int> *result) const {
-    int u, v;
+  bool MostDistantStrategy<V>::InternalFind(size_t n, const vector<V> &vectors, size_t m, vector<size_t> *result) const {
+    size_t u, v;
     FindTwoMostDistantVectors(n, vectors, &u, &v);
 
     ContainerType distance(n);
     distance[0].second = u;
     distance[1].second = v;
 
-    for (int w = 0, index = 2; w < n; ++w)
+    for (size_t w = 0, index = 2; w < n; ++w)
       if (w != u && w != v) {
 	distance[index].first = std::numeric_limits<Type>::infinity();
 	distance[index].second = w;
@@ -105,14 +114,14 @@ namespace algo {
     Relax(distance.begin() + 2, distance.end(), vectors, vectors[u]);
     Relax(distance.begin() + 2, distance.end(), vectors, vectors[v]);
 
-    for (int i = 2; i < m; ++i) {
+    for (size_t i = 2; i < m; ++i) {
       IteratorType from = distance.begin() + i, to = distance.end();
       IteratorType best = std::max_element(from, to);
       std::swap(*from, *best);
       Relax(from + 1, to, vectors, vectors[from->second]);
     }
 
-    for (int i = 0; i < m; ++i)
+    for (size_t i = 0; i < m; ++i)
       (*result)[i] = distance[i].second;
     return true;
   }
@@ -128,13 +137,13 @@ namespace algo {
   };
 
   TEST_F(TestMostDistantStrategy, TestIncorrect) {
-    vector<int> result;
+    vector<size_t> result;
 
     EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), -1, &result));
     EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), 1, &result));
     EXPECT_FALSE(strategy_->Find(vector<math::Vector>(), 2, &result));
 
-    const int kSize = 10;
+    const size_t kSize = 10u;
     math::Vector v(2);
     vector<math::Vector> vectors(kSize, v);
     EXPECT_FALSE(strategy_->Find(vectors, -10, &result));
@@ -143,7 +152,7 @@ namespace algo {
   }
 
   TEST_F(TestMostDistantStrategy, TestZero) {
-    vector<int> result;
+    vector<size_t> result;
 
     ASSERT_TRUE(strategy_->Find(vector<math::Vector>(), 0, &result));
     EXPECT_EQ(0u, result.size());
@@ -153,30 +162,30 @@ namespace algo {
   }
 
   TEST_F(TestMostDistantStrategy, TestOne) {
-    vector<int> result;
+    vector<size_t> result;
 
     ASSERT_TRUE(strategy_->Find(vector<math::Vector>(1, math::Vector(3)), 1, &result));
     ASSERT_EQ(1u, result.size());
     EXPECT_EQ(0, result[0]);
 
-    const int kSize = 16;
+    const size_t kSize = 16u;
     ASSERT_TRUE(strategy_->Find(vector<math::Vector>(kSize, math::Vector(2)), 1, &result));
     ASSERT_EQ(1u, result.size());
     EXPECT_TRUE(result[0] >= 0 && result[0] < kSize);
   }
 
   TEST_F(TestMostDistantStrategy, TestTwo) {
-    vector<int> result;
+    vector<size_t> result;
 
     vector<math::Vector> vectors(2, math::Vector(3));
     ASSERT_TRUE(strategy_->Find(vectors, 2, &result));
     ASSERT_EQ(2u, result.size());
     EXPECT_TRUE((result[0] == 0 && result[1] == 1) || (result[0] == 1 && result[1] == 0));
 
-    math::Vector u(2);
-    math::Vector v(2); v[0] = 0, v[1] = 3.0;
-    math::Vector w(2); w[0] = 4.0, w[1] = 0.0;
-    vectors.resize(3, math::Vector(2));
+    math::Vector u(3);
+    math::Vector v(3); v[0] = 0, v[1] = 3.0;
+    math::Vector w(3); w[0] = 4.0, w[1] = 0.0;
+    vectors.resize(3, math::Vector(3));
     vectors[0] = u;
     vectors[1] = v;
     vectors[2] = w;
@@ -186,8 +195,8 @@ namespace algo {
   }
 
   TEST_F(TestMostDistantStrategy, TestManyAllEqual) {
-    const int kSize = 4;
-    vector<int> result;
+    const size_t kSize = 4u;
+    vector<size_t> result;
     vector<math::Vector> vectors(kSize, math::Vector(2));
     EXPECT_TRUE(strategy_->Find(vectors, kSize, &result));
     ASSERT_EQ(kSize, result.size());
@@ -199,8 +208,8 @@ namespace algo {
   }
 
   TEST_F(TestMostDistantStrategy, TestManyFour) {
-    const int kSize = 4;
-    vector<int> result;
+    const size_t kSize = 4u;
+    vector<size_t> result;
     vector<math::Vector> vectors(kSize, math::Vector(2));
     vectors[0][0] = -1.0, vectors[0][1] = 0.0;
     vectors[1][0] = +1.0, vectors[1][1] = 2.0;
