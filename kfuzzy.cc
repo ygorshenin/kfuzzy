@@ -33,6 +33,6 @@ int main(int argc, char **argv) {
   algo::KFuzzyAlgorithm<math::Vector>::Options options;
   options.num_clusters = num_clusters;
   algo.Clusterize(objects, options, &indexes);
-  std::cerr << "Clustering complete" << std::endl;
+  std::cerr << "Clustering complete!" << std::endl;
   return 0;
 }
