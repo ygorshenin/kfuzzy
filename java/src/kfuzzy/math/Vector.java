@@ -71,7 +71,7 @@ public class Vector {
 	for (double d : components)
 	    largest = Math.max(largest, Math.abs(d));
 
-	if (!EQ(ZERO, result)) {
+	if (!EQ(ZERO, largest)) {
 	    double t;
 	    for (double d : components) {
 		t = d / largest;

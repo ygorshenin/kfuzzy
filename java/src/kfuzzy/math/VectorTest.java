@@ -66,10 +66,10 @@ public class VectorTest extends TestCase {
     }
 
     public void testAbs() {
-	assertEquals(5.0, new Vector(+3.0, +4.0).abs());
-	assertEquals(5.0, new Vector(-3.0, +4.0).abs());
-	assertEquals(5.0, new Vector(-3.0, -4.0).abs());
-	assertEquals(5.0, new Vector(+3.0, -4.0).abs());
+	assertEquals(5.0, new Vector(+3.0, +4.0).abs(), Vector.EPSILON);
+	assertEquals(5.0, new Vector(-3.0, +4.0).abs(), Vector.EPSILON);
+	assertEquals(5.0, new Vector(-3.0, -4.0).abs(), Vector.EPSILON);
+	assertEquals(5.0, new Vector(+3.0, -4.0).abs(), Vector.EPSILON);
     }
 
     public void checkVector(Vector v, double[] components) {
