@@ -4,5 +4,7 @@ import kfuzzy.math.*;
 
 
 public interface MostDistantInterface {
-    Vector[] findMostDistant(Vector[] vectors, int m);
+    /* Finds m most distant vectors. Returns an array of indexes of
+     * corresponding vectors or null in the case of failure. */
+    int[] findMostDistant(Vector[] vectors, int m);
 }
