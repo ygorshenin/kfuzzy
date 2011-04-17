@@ -3,3 +3,5 @@
 .\#*
 \#*\#
 *.o
+cpp/kfuzzy
+java/build
