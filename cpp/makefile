@@ -11,5 +11,6 @@ kfuzzy.o: kfuzzy.cc math/vector.h algo/strategy.hpp io/reader.hpp
 	g++ -DHOME -g -o kfuzzy.o -c kfuzzy.cc -I. -Wall -pedantic
 
 clear:
+	rm kfuzzy
 	rm kfuzzy.o
 	rm vector.o
