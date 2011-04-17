@@ -1,5 +1,5 @@
 kfuzzy: kfuzzy.o vector.o
-	g++ -o kfuzzy kfuzzy.o vector.o -L/usr/local/lib -lgflags -lgtest
+	g++ -o kfuzzy kfuzzy.o vector.o -L/usr/local/lib -lgflags -lgtest -lpthread
 
 tests: kfuzzy
 	./kfuzzy --run_all_tests
