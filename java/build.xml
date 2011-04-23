@@ -1,11 +1,14 @@
 <project name = "KFuzzy" basedir = "." default = "main">
   <property name = "build.dir" value = "build" />
   <property name = "classes.dir" value = "${build.dir}/classes" />
+  <property name = "docs.dir" value = "${build.dir}/doc" />
   <property name = "jar.dir" value = "${build.dir}/jar" />
   <property name = "lib.dir" value = "lib" />
   <property name = "src.dir" value = "src" />
 
   <property name = "main-class" value = "kfuzzy.Main" />
+
+  <property name = "packagenames" value = "kfuzzy.*" />
 
   <path id = "classpath">
     <fileset dir = "${lib.dir}" includes = "**/*.jar" />
@@ -19,6 +22,8 @@
   <target name = "compile">
     <mkdir dir = "${classes.dir}" />
     <javac includeantruntime = "false" srcdir = "${src.dir}" destdir = "${classes.dir}" classpathref = "classpath" />
+    <mkdir dir = "${docs.dir}" />
+    <javadoc packagenames = "${packagenames}" sourcepath = "${src.dir}" destdir = "${docs.dir}" classpathref = "classpath" />
   </target>
 
   <target name = "jar" depends = "compile">
@@ -32,6 +37,9 @@
 
   <target name = "run" depends = "jar">
     <java jar = "${jar.dir}/${ant.project.name}.jar" fork = "true">
+      <assertions enableSystemAssertions = "true">
+	<enable package = "kfuzzy" />
+      </assertions>
       <classpath>
 	<path refid = "classpath" />
 	<path location = "${jar.dir}/${ant.project.name}.jar" />
