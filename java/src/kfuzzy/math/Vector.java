@@ -60,10 +60,12 @@ public class Vector {
     }
     /**
      * Returns required component of the vector.
-     * @param index index of required component
+     * @param index index of required component. Must be between zero and number of components - 1 (inclusive).
      * @return value of required component
      */
     public double get(int index) {
+	assert index >= 0 && index < getSize() : "current size: " + getSize() + ", index = " + index;
+
 	return components[index];
     }
     /**
@@ -75,11 +77,11 @@ public class Vector {
     }
     /**
      * Adds vector to current vector.
-     * @param other second argument of addition
+     * @param other second argument of addition. Number of components in the other vector must be equal to number of components in the current vector.
      * @return new vector, which is the sum of that two vectors
      */
     public Vector add(Vector other) {
-	assert getSize() == other.getSize(): "current size: " + getSize() + ", other size: " + other.getSize();
+	assert getSize() == other.getSize() : "current size: " + getSize() + ", other size: " + other.getSize();
 
 	final int n = getSize();
 	double[] buffer = new double[n];
@@ -89,11 +91,11 @@ public class Vector {
     }
     /**
      * Subtracts from current vector other vector.
-     * @param other second argument of subtraction
+     * @param other second argument of subtraction. Number of components in other vector must be equal to number of components in the current vector.
      * @return new vector, which is the difference between that two vectors
      */
     public Vector sub(Vector other) {
-	assert getSize() == other.getSize(): "current size: " + getSize() + ", other size: " + other.getSize();
+	assert getSize() == other.getSize() : "current size: " + getSize() + ", other size: " + other.getSize();
 
 	final int n = getSize();
 	double[] buffer = new double[n];
