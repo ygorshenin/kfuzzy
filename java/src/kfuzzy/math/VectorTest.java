@@ -3,7 +3,17 @@ package kfuzzy.math;
 import junit.framework.*;
 
 
+/**
+ * Class VectorTests contains several tests for Vector class.
+ *
+ * @author Yuri Gorshenin
+ * @version 2011.0418
+ * @since 1.6
+ */
 public class VectorTest extends TestCase {
+    /**
+     * Tests construction of vectors.
+     */
     public void testConstructor() {
 	final int size = 4;
 
@@ -19,7 +29,9 @@ public class VectorTest extends TestCase {
 	vector = new Vector(content);
 	checkVector(vector, content);
     }
-
+    /**
+     * Tests addition of vectors.
+     */
     public void testAdd() {
 	final int size = 3;
 
@@ -35,7 +47,9 @@ public class VectorTest extends TestCase {
 	checkVector(v, vContent);
 	checkVector(w, wContent);
     }
-
+    /**
+     * Tests subtraction of vectors.
+     */
     public void testSub() {
 	final int size = 3;
 
@@ -51,7 +65,9 @@ public class VectorTest extends TestCase {
 	checkVector(v, vContent);
 	checkVector(w, wContent);
     }
-
+    /**
+     * Tests multiplication of vectors by floating-point values.
+     */
     public void testMul() {
 	final int size = 4;
 
@@ -64,15 +80,23 @@ public class VectorTest extends TestCase {
 	checkVector(u, uContent);
 	checkVector(v, vContent);
     }
-
+    /**
+     * Tests absolute values of vectors.
+     */
     public void testAbs() {
 	assertEquals(5.0, new Vector(+3.0, +4.0).abs(), Vector.EPSILON);
 	assertEquals(5.0, new Vector(-3.0, +4.0).abs(), Vector.EPSILON);
 	assertEquals(5.0, new Vector(-3.0, -4.0).abs(), Vector.EPSILON);
 	assertEquals(5.0, new Vector(+3.0, -4.0).abs(), Vector.EPSILON);
     }
-
-    public void checkVector(Vector v, double[] components) {
+    /**
+     * Checks, that vector is consist of array of components.
+     * In the case of failure, raises AssertionError.
+     *
+     * @param v vector that will be checked
+     * @param components expected array of components
+     */
+    private void checkVector(Vector v, double[] components) {
 	assertEquals(components.length, v.getSize());
 	for (int i = 0; i < components.length; ++i)
 	    assertEquals(components[i], v.get(i), Vector.EPSILON);
