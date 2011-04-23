@@ -31,15 +31,7 @@ public class ClusterCentersAdapter implements ClusterCentersInterface {
     public ClusterCentersAdapter(MostDistantInterface adaptee) {
 	this.adaptee = adaptee;
     }
-    /**
-     * Finds some set of the most distant vectors from the given set.
-     *
-     * @param vectors an array of vectors, in which the most distant
-     * vectors will be finded. Must not be null, all vectors must have
-     * the same size and not be null.
-     * @param m the number of the most distant vectors, that will be finded. Must be between zero and length of vectors array - 1 (inclusive).
-     * @return an array of the most distant vectors.
-     */
+
     public Vector[] findClusterCenters(Vector[] vectors, int m) {
 	int[] indexes = adaptee.findMostDistant(vectors, m);
 	Vector[] result = new Vector[m];
