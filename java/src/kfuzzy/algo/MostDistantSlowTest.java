@@ -13,26 +13,6 @@ public class MostDistantSlowTest extends TestCase {
 	strategy = new MostDistantSlow();
     }
 
-    public void testIncorrect() {
-	assertNull(strategy.findMostDistant(new Vector[0], -1));
-	assertNull(strategy.findMostDistant(new Vector[0], +1));
-	assertNull(strategy.findMostDistant(new Vector[0], +2));
-
-	final int size = 10, dimensions = 3;
-	Vector[] vectors = new Vector[size];
-	for (int i = 0; i < size; ++i)
-	    vectors[i] = new Vector(dimensions);
-
-	assertNull(strategy.findMostDistant(vectors, -10));
-	assertNull(strategy.findMostDistant(vectors, size + 1));
-	assertNull(strategy.findMostDistant(vectors, 2 * size));
-
-	vectors = new Vector[] { new Vector(1), new Vector(2), new Vector(3) };
-	assertNull(strategy.findMostDistant(vectors, 1));
-	vectors = new Vector[] { new Vector(2), new Vector(2), new Vector(2), new Vector(3) };
-	assertNull(strategy.findMostDistant(vectors, 3));
-    }
-
     public void testZero() {
 	int[] result;
 
