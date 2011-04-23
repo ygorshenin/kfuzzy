@@ -13,11 +13,11 @@ import kfuzzy.math.Vector;
  */
 public interface MostDistantInterface {
     /**
-     * Finds indexes of some number of most distant vectors.
+     * Finds indices of some number of most distant vectors in the given set.
      *
-     * @param vectors array of vectors. Must not be null, all elements must have an equal number of dimensions and not be null.
+     * @param vectors given set of vectors, must not be null, all elements must have an equal number of dimensions and not be null.
      * @param m number of most distant vectors, that must be finded. Must be between zero and the number of given vectors (inclusive).
-     * @return array of indexes of the most distant vectors.
+     * @return array of indices of the most distant vectors.
      */
     int[] findMostDistant(Vector[] vectors, int m);
 }
