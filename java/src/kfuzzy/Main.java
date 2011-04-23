@@ -4,8 +4,8 @@ import kfuzzy.math.*;
 
 
 /**
- * Main is the main class of the whole project.
- * Takes responsibility of creating model and running form.
+ * Main is the main class of the whole project. Takes responsibility
+ * of creating model and running form.
  *
  * @author Yuri Gorshenin
  * @version 2011.0418

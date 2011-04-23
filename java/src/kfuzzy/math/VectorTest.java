@@ -28,6 +28,9 @@ public class VectorTest extends TestCase {
 	content = new double[] { 1.0, 2.0, 3.0, 4.0 };
 	vector = new Vector(content);
 	checkVector(vector, content);
+
+	vector = new Vector(0);
+	vector = new Vector();
     }
     /**
      * Tests addition of vectors.
@@ -88,6 +91,10 @@ public class VectorTest extends TestCase {
 	assertEquals(5.0, new Vector(-3.0, +4.0).abs(), Vector.EPSILON);
 	assertEquals(5.0, new Vector(-3.0, -4.0).abs(), Vector.EPSILON);
 	assertEquals(5.0, new Vector(+3.0, -4.0).abs(), Vector.EPSILON);
+
+	assertEquals(0.0, new Vector(0).abs(), Vector.EPSILON);
+	assertEquals(0.0, new Vector(new double[] {}).abs(), Vector.EPSILON);
+	assertEquals(0.0, new Vector(0.0, 0.0, 0.0, 0.0).abs(), Vector.EPSILON);
     }
     /**
      * Checks, that vector is consist of array of components.

@@ -39,10 +39,10 @@ public class Vector {
     private double[] components;
     /**
      * Class constructor specifying number of dimensions. All components of the vector will equal to {@link #ZERO}.
-     * @param size number of dimensions
+     * @param size number of dimensions. Must be greater or equal to zero.
      */
     public Vector(int size) {
-	assert size > 0 : "size: " + size;
+	assert size >= 0 : "size: " + size;
 
 	this.size = size;
 	this.components = new double[size];
@@ -50,11 +50,10 @@ public class Vector {
     }
     /**
      * Class constructor specifying list of components. Number of dimensions will be equal to the number of components.
-     * @param components list of components
+     * @param components list of components. Must not be null.
      */
     public Vector(double ... components) {
 	assert components != null : "components must not be null";
-	assert components.length > 0 : "components must not be empty";
 
 	this.size = components.length;
 	this.components = Arrays.copyOf(components, components.length);
@@ -119,7 +118,7 @@ public class Vector {
      * @return absolute value of the vector
      */
     public double abs() {
-	double largest = Double.NEGATIVE_INFINITY, result = 0;
+	double largest = 0.0, result = 0;
 	for (double d : components)
 	    largest = Math.max(largest, Math.abs(d));
 
