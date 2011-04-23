@@ -4,8 +4,8 @@ import kfuzzy.math.Vector;
 
 
 /**
- * Interface to algorithms, that finds some number of most distant
- * vectors.
+ * Interface to algorithms, that finds some number of the most distant
+ * vectors from the given set.
  *
  * @author Yuri Gorshenin
  * @version 2011.0423
