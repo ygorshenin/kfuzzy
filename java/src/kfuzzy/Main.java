@@ -1,7 +1,10 @@
 package kfuzzy;
 
-import kfuzzy.math.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
+import kfuzzy.gui.MainFrame;
 
 /**
  * Main is the main class of the whole project. Takes responsibility
@@ -28,6 +31,13 @@ public class Main implements Runnable {
     /**
      * Main method of the project. Creates model and runs form.
      */
-    public void go() {
+    public void go() throws Exception {
+	EventQueue.invokeLater(new Runnable() {
+		public void run() {
+		    JFrame frame = new MainFrame();
+		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    frame.setVisible(true);
+		}
+	    });
     }
 }
