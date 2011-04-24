@@ -26,6 +26,10 @@ public class MainFrame extends JFrame {
     private class OpenAction extends AbstractAction {
 	private JFileChooser fileChooser;
 
+	private boolean exists(String path) {
+	    return new java.io.File(path).exists();
+	}
+
 	public OpenAction(JFileChooser fileChooser) {
 	    putValue(NAME, "Open");
 	    this.fileChooser = fileChooser;
@@ -34,7 +38,13 @@ public class MainFrame extends JFrame {
 	@Override public void actionPerformed(ActionEvent e) {
 	    int result = fileChooser.showOpenDialog(MainFrame.this);
 	    if (result == JFileChooser.APPROVE_OPTION) {
-		JOptionPane.showMessageDialog(MainFrame.this, fileChooser.getSelectedFile());
+		String path = fileChooser.getSelectedFile().getPath();
+		if (exists(path))
+		    JOptionPane.showMessageDialog(MainFrame.this, fileChooser.getSelectedFile(), "info",
+						  JOptionPane.INFORMATION_MESSAGE);
+		else
+		    JOptionPane.showMessageDialog(MainFrame.this, fileChooser.getSelectedFile() + " doesn't exists", "error",
+						  JOptionPane.ERROR_MESSAGE);
 	    }
 	}
     }

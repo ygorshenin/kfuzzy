@@ -32,6 +32,12 @@ public class Main implements Runnable {
      * Main method of the project. Creates model and runs form.
      */
     public void go() throws Exception {
+	try {
+	    UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+	} catch (Exception e) {
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	}
+
 	EventQueue.invokeLater(new Runnable() {
 		public void run() {
 		    JFrame frame = new MainFrame();
