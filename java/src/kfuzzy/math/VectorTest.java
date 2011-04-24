@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import kfuzzy.utils.TestingUtils;
 
 /**
- * Class VectorTests contains several tests for Vector class.
+ * Class contains several tests for Vector class.
  *
  * @author Yuri Gorshenin
  * @version 2011.0418
