@@ -1,7 +1,7 @@
 package kfuzzy.math;
 
-import junit.framework.*;
-
+import junit.framework.TestCase;
+import kfuzzy.utils.TestingUtils;
 
 /**
  * Class VectorTests contains several tests for Vector class.
@@ -10,7 +10,7 @@ import junit.framework.*;
  * @version 2011.0418
  * @since 1.6
  */
-public class VectorTest extends TestCase {
+public class VectorTest extends TestingUtils {
     /**
      * Tests construction of vectors.
      */
@@ -19,15 +19,15 @@ public class VectorTest extends TestCase {
 
 	double[] content = new double[] { 0, 0, 0, 0 };
 	Vector vector = new Vector(size);
-	checkVector(vector, content);
+	checkVector(content, vector);
 
 	content = new double[] { 1.5, -2.2, 3.1415, 19.5 };
 	vector = new Vector(content);
-	checkVector(vector, content);
+	checkVector(content, vector);
 
 	content = new double[] { 1.0, 2.0, 3.0, 4.0 };
 	vector = new Vector(content);
-	checkVector(vector, content);
+	checkVector(content, vector);
 
 	vector = new Vector(0);
 	vector = new Vector();
@@ -46,9 +46,9 @@ public class VectorTest extends TestCase {
 	Vector v = new Vector(vContent);
 	Vector w = u.add(v);
 
-	checkVector(u, uContent);
-	checkVector(v, vContent);
-	checkVector(w, wContent);
+	checkVector(uContent, u);
+	checkVector(vContent, v);
+	checkVector(wContent, w);
     }
     /**
      * Tests subtraction of vectors.
@@ -64,9 +64,9 @@ public class VectorTest extends TestCase {
 	Vector v = new Vector(new double[] { -7.18, 21.20, 4.11 });
 	Vector w = u.sub(v);
 
-	checkVector(u, uContent);
-	checkVector(v, vContent);
-	checkVector(w, wContent);
+	checkVector(uContent, u);
+	checkVector(vContent, v);
+	checkVector(wContent, w);
     }
     /**
      * Tests multiplication of vectors by floating-point values.
@@ -80,8 +80,8 @@ public class VectorTest extends TestCase {
 	Vector u = new Vector(uContent);
 	Vector v = u.mul(0.5);
 
-	checkVector(u, uContent);
-	checkVector(v, vContent);
+	checkVector(uContent, u);
+	checkVector(vContent, v);
     }
     /**
      * Tests absolute values of vectors.
@@ -95,17 +95,5 @@ public class VectorTest extends TestCase {
 	assertEquals(0.0, new Vector(0).abs(), Vector.EPSILON);
 	assertEquals(0.0, new Vector(new double[] {}).abs(), Vector.EPSILON);
 	assertEquals(0.0, new Vector(0.0, 0.0, 0.0, 0.0).abs(), Vector.EPSILON);
-    }
-    /**
-     * Checks, that vector is consist of array of components.
-     * In the case of failure, raises AssertionError.
-     *
-     * @param v vector that will be checked
-     * @param components expected array of components
-     */
-    private void checkVector(Vector v, double[] components) {
-	assertEquals(components.length, v.getSize());
-	for (int i = 0; i < components.length; ++i)
-	    assertEquals(components[i], v.get(i), Vector.EPSILON);
     }
 }
