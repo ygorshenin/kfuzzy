@@ -147,6 +147,24 @@ public class KFuzzyAlgorithm {
 	    centers[i] = recomputeCenter(numDimensions, numObjects, vectors, i, probabilities, options);
     }
     /**
+     * Finds assignment based on probabilities to lie in particular cluster.
+     *
+     * @param numObjects number of vectors that are clusterized
+     * @param numClusters number of clusters to which objects are clusterized
+     * @param probabilities probabilities of ith object to lie in jth cluster
+     * @return array of assignment, where ith element is a number of a cluster of ith vector
+     */
+    private int[] findAssignment(int numObjects, int numClusters, double[][] probabilities) {
+	int[] assignment = new int[numObjects];
+
+	for (int i = 0; i < numObjects; ++i) {
+	    for (int j = 0; j < numClusters; ++j)
+		if (probabilities[i][j] > probabilities[i][assignment[i]])
+		    assignment[i] = j;
+	}
+	return assignment;
+    }
+    /**
      * Constructor sets algorithm that finds cluster centers to the ClusterCentersAdapter implementation
      */
     public KFuzzyAlgorithm() {
@@ -178,17 +196,24 @@ public class KFuzzyAlgorithm {
      */
     public int[] clusterize(Vector[] vectors, int numClusters, Options options) {
 	final int numObjects = vectors.length;
-	numClusters = Math.min(numObjects, numClusters);
 
+	if (numObjects == 0)
+	    return new int[] {};
+	numClusters = Math.min(numObjects, numClusters);
 	if (numClusters == 0)
 	    return new int[] {};
+	final int numDimensions = vectors[0].getSize();
 
 	assert numObjects > 0 && numClusters > 0 && numClusters <= numObjects;
 
 	Vector[] centers = findCenters(vectors, numClusters);
-	if (centers == null)
-	    return null;
 	double[][] probabilities = new double[numObjects][numClusters];
-	return null;
+	findProbabilities(numObjects, vectors, numClusters, centers, options, probabilities);
+
+	for (int iteration = 0; iteration < options.maxIterations; ++iteration) {
+	    recomputeCenters(numDimensions, numObjects, vectors, probabilities, options, numClusters, centers);
+	    findProbabilities(numObjects, vectors, numClusters, centers, options, probabilities);
+	}
+	return findAssignment(numObjects, numClusters, probabilities);
     }
 }
