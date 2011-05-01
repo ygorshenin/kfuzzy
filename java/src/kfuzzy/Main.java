@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import kfuzzy.Model;
 import kfuzzy.gui.MainFrame;
 
 /**
@@ -40,7 +41,7 @@ public class Main implements Runnable {
 
 	EventQueue.invokeLater(new Runnable() {
 		public void run() {
-		    JFrame frame = new MainFrame();
+		    JFrame frame = new MainFrame(new Model());
 		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    frame.setVisible(true);
 		}
