@@ -3,6 +3,7 @@ package kfuzzy.utils;
 import java.util.*;
 import junit.framework.TestCase;
 
+import kfuzzy.math.Utils;
 import kfuzzy.math.Vector;
 
 
@@ -46,6 +47,6 @@ public class TestingUtils extends TestCase {
     public void checkVector(double[] components, Vector v) {
 	assertEquals(components.length, v.getSize());
 	for (int i = 0; i < components.length; ++i)
-	    assertEquals(components[i], v.get(i), Vector.EPSILON);
+	    assertEquals(components[i], v.get(i), Utils.EPSILON);
     }
 }
