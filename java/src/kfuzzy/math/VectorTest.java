@@ -1,6 +1,7 @@
 package kfuzzy.math;
 
 import junit.framework.TestCase;
+import kfuzzy.math.Utils;
 import kfuzzy.utils.TestingUtils;
 
 /**
@@ -87,13 +88,13 @@ public class VectorTest extends TestingUtils {
      * Tests absolute values of vectors.
      */
     public void testAbs() {
-	assertEquals(5.0, new Vector(+3.0, +4.0).abs(), Vector.EPSILON);
-	assertEquals(5.0, new Vector(-3.0, +4.0).abs(), Vector.EPSILON);
-	assertEquals(5.0, new Vector(-3.0, -4.0).abs(), Vector.EPSILON);
-	assertEquals(5.0, new Vector(+3.0, -4.0).abs(), Vector.EPSILON);
+	assertEquals(5.0, new Vector(+3.0, +4.0).abs(), Utils.EPSILON);
+	assertEquals(5.0, new Vector(-3.0, +4.0).abs(), Utils.EPSILON);
+	assertEquals(5.0, new Vector(-3.0, -4.0).abs(), Utils.EPSILON);
+	assertEquals(5.0, new Vector(+3.0, -4.0).abs(), Utils.EPSILON);
 
-	assertEquals(0.0, new Vector(0).abs(), Vector.EPSILON);
-	assertEquals(0.0, new Vector(new double[] {}).abs(), Vector.EPSILON);
-	assertEquals(0.0, new Vector(0.0, 0.0, 0.0, 0.0).abs(), Vector.EPSILON);
+	assertEquals(0.0, new Vector(0).abs(), Utils.EPSILON);
+	assertEquals(0.0, new Vector(new double[] {}).abs(), Utils.EPSILON);
+	assertEquals(0.0, new Vector(0.0, 0.0, 0.0, 0.0).abs(), Utils.EPSILON);
     }
 }

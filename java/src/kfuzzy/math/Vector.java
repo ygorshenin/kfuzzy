@@ -1,7 +1,9 @@
 package kfuzzy.math;
 
+
 import java.util.*;
 
+import kfuzzy.math.Utils;
 
 /**
  * Class Vector represents multidimensional vector in the Eucldian space.
@@ -13,22 +15,9 @@ import java.util.*;
  */
 public class Vector {
     /**
-     * Maximum difference between two distinct floating-point values for which they are considered as equal.
-     */
-    public final static double EPSILON = 1e-9;
-    /**
      * A constant that represents a zero floating-point value.
      */
     public final static double ZERO = 0.0;
-    /**
-     * Checks that two floating-point numbers differ by no more than {@link #EPSILON}.
-     * @param u first of the two numbers
-     * @param v second of the two numbers
-     * @return true, if difference between two numbers is no more than {@link #EPSILON} in absolute value.
-     */
-    private final static boolean EQ(double u, double v) {
-	return Math.abs(u - v) < EPSILON;
-    }
     /**
      * Number of dimensions of the current vector.
      */
@@ -124,7 +113,7 @@ public class Vector {
 	for (double d : components)
 	    largest = Math.max(largest, Math.abs(d));
 
-	if (!EQ(ZERO, largest)) {
+	if (!Utils.EQ(ZERO, largest)) {
 	    double t;
 	    for (double d : components) {
 		t = d / largest;
