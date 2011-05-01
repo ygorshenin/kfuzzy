@@ -7,12 +7,13 @@ import java.text.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
-import kfuzzy.algo.KFuzzyAlgorithm;
 import kfuzzy.Model;
+import kfuzzy.algo.KFuzzyAlgorithm;
 import kfuzzy.gui.ClustersPaintComponent;
 import kfuzzy.io.KFuzzyInput;
 import kfuzzy.io.ReaderInterface;
 import kfuzzy.io.SimpleReader;
+import kfuzzy.io.TABReader;
 import kfuzzy.math.Vector;
 
 
@@ -21,12 +22,12 @@ public class MainFrame extends JFrame {
     public final static int DEFAULT_HEIGHT = 600;
 
     private class DataFilesFilter extends FileFilter {
-	public final static String DESCRIPTION = "Data files (*.dat|*.data)";
+	public final static String DESCRIPTION = "Data files (*.tab|*.dat|*.data)";
 
 	public boolean accept(java.io.File file) {
 	    if (file.isDirectory())
 		return true;
-	    return file.getName().endsWith("dat") || file.getName().endsWith("data");
+	    return file.getName().endsWith("tab") || file.getName().endsWith("data") || file.getName().endsWith("dat");
 	}
 
 	public String getDescription() {
@@ -147,7 +148,8 @@ public class MainFrame extends JFrame {
 	    paintComponent.setSecondIndex(0);
 	    paintComponent.repaint();
 	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(MainFrame.this, String.format("Can't process file: %s", filename), "error", JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(MainFrame.this, String.format("Can't process file %s", filename), "error", JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
 	}
     }
 
@@ -204,7 +206,7 @@ public class MainFrame extends JFrame {
     public MainFrame(Model model) {
 	this.model = model;
 
-	fileReader = new SimpleReader();
+	fileReader = new TABReader();
 
 	openAction = new OpenAction(createFileChooser());
 	quitAction = new QuitAction();
