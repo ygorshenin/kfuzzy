@@ -3,6 +3,7 @@ package kfuzzy.io;
 import java.io.*;
 import java.util.*;
 
+import kfuzzy.io.BasicReader;
 import kfuzzy.math.Vector;
 
 
@@ -26,35 +27,9 @@ import kfuzzy.math.Vector;
  * @version 2011.0424
  * @since 1.6
  */
-public class SimpleReader implements ReaderInterface {
-    private BufferedReader in;
-    private StringTokenizer st;
-
-    private void eat(String line) {
-	st = new StringTokenizer(line);
-    }
-
-    private String next() throws IOException {
-	while (!st.hasMoreTokens()) {
-	    String line = in.readLine();
-	    if (line == null)
-		return null;
-	    eat(line);
-	}
-	return st.nextToken();
-    }
-
-    private int nextInt() throws IOException {
-	return Integer.parseInt(next());
-    }
-
-    private double nextDouble() throws IOException {
-	return Double.parseDouble(next());
-    }
-
+public class SimpleReader extends BasicReader implements ReaderInterface {
     public KFuzzyInput read(InputStreamReader in) throws IOException {
-	this.in = new BufferedReader(in);
-	eat("");
+	initialize(in);
 
 	int numObjects = nextInt(), numDimensions = nextInt(), numClusters = nextInt();
 
