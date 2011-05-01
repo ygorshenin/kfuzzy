@@ -2,9 +2,8 @@ package kfuzzy.algo;
 
 import java.util.*;
 
+import kfuzzy.math.Utils;
 import kfuzzy.math.Vector;
-
-
 /**
  * An implementation of the KFuzzy algorithm.
  *
@@ -56,16 +55,6 @@ public class KFuzzyAlgorithm {
 	}
     }
     /**
-     * If two values differ at most that value, they are considered as equal
-     */
-    public final static double EPSILON = 1e-9;
-    /**
-     * Checks two floating-point values for equality
-     */
-    public final static boolean EQ(double u, double v) {
-	return Math.abs(u - v) < EPSILON;
-    }
-    /**
      * Reference to an implementation of the ClusterCentersInterface
      */
     private ClusterCentersInterface clusterCentersAlgorithm;
@@ -93,7 +82,7 @@ public class KFuzzyAlgorithm {
 
 	for (int i = 0; i < numClusters; ++i) {
 	    double distance = vector.sub(centers[i]).abs();
-	    if (EQ(distance, 0))
+	    if (Utils.EQ(distance, 0))
 		probabilities[i] = Double.MAX_VALUE;
 	    else
 		probabilities[i] = Math.pow(1.0 / distance, power);
