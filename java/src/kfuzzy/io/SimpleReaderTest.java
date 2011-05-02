@@ -42,6 +42,7 @@ public class SimpleReaderTest extends TestingUtils {
 	    KFuzzyInput input = readFromString(buffer);
 	    assertEquals(0, input.getNumObjects());
 	    assertEquals(4, input.getNumClusters());
+	    assertEquals(10, input.getNumDimensions());
 	    assertEquals(0, input.getVectors().length);
 	} catch (IOException e) {
 	    fail(e.getMessage());
@@ -62,6 +63,7 @@ public class SimpleReaderTest extends TestingUtils {
 
 	    assertEquals(3, input.getNumObjects());
 	    assertEquals(3, input.getNumClusters());
+	    assertEquals(2, input.getNumDimensions());
 
 	    Vector[] vectors = input.getVectors();
 	    Arrays.sort(vectors, new LexicalVectorComparator());
