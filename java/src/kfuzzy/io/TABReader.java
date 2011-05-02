@@ -48,6 +48,6 @@ public class TABReader extends BasicReader implements ReaderInterface {
 	    vectors[i] = new Vector(values[i]);
 	}
 
-	return new KFuzzyInput(numObjects, vectors, numDimensions, numClusters);
+	return new KFuzzyInput(numObjects, numDimensions, vectors, numClusters);
     }
 }
