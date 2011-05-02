@@ -17,7 +17,7 @@ public class KFuzzyInputTest extends TestingUtils {
 	Arrays.sort(a, new LexicalVectorComparator());
 	Arrays.sort(b, new LexicalVectorComparator());
 	for (int i = 0; i < a.length; ++i)
-	    assertEquals(a[i], b[i]);
+	    assertTrue(a[i].equals(b[i]));
     }
 
     public void testSimple() {
@@ -27,6 +27,6 @@ public class KFuzzyInputTest extends TestingUtils {
 	KFuzzyInput expected = new KFuzzyInput(3, 2, new Vector[] { new Vector(-5.3, 1.1),
 								    new Vector(2.0, 3.1),
 								    new Vector(1.0, -1.2) }, 1);
-	checkKFuzzyInput(expected, current);
+       	checkKFuzzyInput(expected, current);
     }
 }
