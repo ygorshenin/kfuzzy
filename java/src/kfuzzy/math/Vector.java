@@ -123,4 +123,24 @@ public class Vector {
 	}
 	return result;
     }
+    /**
+     * Checks two vectors for equality
+     * @param o other vector
+     * @return true if other is a Vector, has the same size and the same components
+     */
+    @Override public boolean equals(Object o) {
+	if (this == o)
+	    return true;
+	if (o == null || ! (o instanceof Vector))
+	    return false;
+
+	Vector other = (Vector) o;
+
+	if (getSize() != other.getSize())
+	    return false;
+	for (int i = 0; i < getSize(); ++i)
+	    if (!Utils.EQ(get(i), other.get(i)))
+		return false;
+	return true;
+    }
 }
