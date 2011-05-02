@@ -11,28 +11,19 @@ public class TABReader extends BasicReader implements ReaderInterface {
     public KFuzzyInput read(InputStreamReader in) throws IOException {
 	initialize(in);
 
-	int numDimensions = nextInt(), numTypes = nextInt(), fakeZero = nextInt();
+	int numDimensions = nextInt(), numClusters = nextInt(), fakeZero = nextInt();
 
-	for (int i = 0; i < numTypes; ++i)
-	    nextInt();
+	int numObjects = 0;
+	for (int i = 0; i < numClusters; ++i)
+	    numObjects = nextInt();
+
 	double unknownValue = nextDouble();
 
-	ArrayList<String> lines = new ArrayList<String>();
-	while (true) {
-	    String line = super.in.readLine().trim();
-	    if (line == null || line.isEmpty())
-		break;
-	    lines.add(line);
-	}
-
-	int numClusters = lines.size();
-
-	double[][] values = new double[numClusters][numDimensions];
+	double[][] values = new double[numObjects][numDimensions];
 	int[] totalKnown = new int[numDimensions];
 	double[] sumComponents = new double[numDimensions];
 
-	for (int i = 0; i < numClusters; ++i) {
-	    eat(lines.get(i));
+	for (int i = 0; i < numObjects; ++i) {
 	    for (int j = 0; j < numDimensions; ++j) {
 		values[i][j] = nextDouble();
 		if (!Utils.EQ(values[i][j], unknownValue)) {
@@ -48,15 +39,15 @@ public class TABReader extends BasicReader implements ReaderInterface {
 	    }
 	}
 
-	Vector[] vectors = new Vector[numClusters];
+	Vector[] vectors = new Vector[numObjects];
 
-	for (int i = 0; i < numClusters; ++i) {
+	for (int i = 0; i < numObjects; ++i) {
 	    for (int j = 0; j < numDimensions; ++j)
 		if (Utils.EQ(values[i][j], unknownValue))
 		    values[i][j] = sumComponents[j];
 	    vectors[i] = new Vector(values[i]);
 	}
 
-	return new KFuzzyInput(numClusters, vectors, numDimensions, numClusters);
+	return new KFuzzyInput(numObjects, vectors, numDimensions, numClusters);
     }
 }
