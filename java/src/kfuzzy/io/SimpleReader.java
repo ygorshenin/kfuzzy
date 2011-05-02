@@ -40,6 +40,6 @@ public class SimpleReader extends BasicReader implements ReaderInterface {
 		components[j] = nextDouble();
 	    vectors[i] = new Vector(components);
 	}
-	return new KFuzzyInput(numObjects, vectors, numDimensions, numClusters);
+	return new KFuzzyInput(numObjects, numDimensions, vectors, numClusters);
     }
 }
