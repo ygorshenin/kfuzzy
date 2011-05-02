@@ -123,23 +123,4 @@ public class Vector {
 	}
 	return result;
     }
-    /**
-     * Check two vectors for equality
-     * @param o other vector
-     */
-    @Override public boolean equals(Object o) {
-	if (this == o)
-	    return true;
-	if (o == null || !(o instanceof Vector))
-	    return false;
-
-	Vector other = (Vector) o;
-
-	if (getSize() != other.getSize())
-	    return false;
-	for (int i = 0; i < getSize(); ++i)
-	    if (!Utils.EQ(get(i), other.get(i)))
-		return false;
-	return true;
-    }
 }
