@@ -33,12 +33,20 @@ public class KFuzzyInput {
      * @param numObjects number of objects
      * @param numDimensions number of dimensions
      * @param numClusters number of clusters
-     * @param vectors list of vectors
+     * @param vectors list of vectors, length must be equal to number
+     * of objects and size of each vector must equal to numDimensions
      */
-    public KFuzzyInput(int numObjects, Vector[] vectors, int numDimensions, int numClusters) {
+    public KFuzzyInput(int numObjects, int numDimensions, Vector[] vectors, int numClusters) {
+	assert vectors.length == numObjects;
+
 	this.numObjects = numObjects;
-	this.vectors = vectors;
 	this.numDimensions = numDimensions;
+
+	this.vectors = vectors;
+
+	for (Vector v : vectors)
+	    assert numDimensions == v.getSize();
+
 	this.numClusters = numClusters;
     }
     /**
