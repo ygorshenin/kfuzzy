@@ -97,4 +97,25 @@ public class VectorTest extends TestingUtils {
 	assertEquals(0.0, new Vector(new double[] {}).abs(), Utils.EPSILON);
 	assertEquals(0.0, new Vector(0.0, 0.0, 0.0, 0.0).abs(), Utils.EPSILON);
     }
+    /**
+     * Tests equals operator
+     */
+    public void testEquals() {
+	assertEquals(false, new Vector(0).equals(new Vector(1)));
+	assertEquals(true, new Vector(10).equals(new Vector(10)));
+
+	Vector a = new Vector(3, 4, 5);
+	assertEquals(true, a.equals(a));
+	assertEquals(false, a.equals(null));
+	assertEquals(false, a.equals(new double[] { 3, 4, 5 }));
+
+	Vector b = new Vector(1, 2, 3);
+
+	assertEquals(false, a.equals(b));
+	assertEquals(false, b.equals(a));
+
+	b = new Vector(3, 4, 5);
+	assertEquals(true, a.equals(b));
+	assertEquals(true, b.equals(a));
+    }
 }
