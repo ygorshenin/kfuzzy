@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileReader;
 import java.text.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 
@@ -17,10 +18,43 @@ import kfuzzy.io.TABReader;
 import kfuzzy.math.Vector;
 
 
-public class MainFrame extends JFrame {
-    public final static int DEFAULT_WIDTH = 800;
-    public final static int DEFAULT_HEIGHT = 600;
+class State {
+    public enum StateValues {
+	Unknown, Unopened, Opened, Clusterized;
+    }
 
+    public interface StateChangedListener {
+	void stateChanged(StateValues oldState, StateValues newState);
+    }
+
+    private StateValues state;
+    private ArrayList<StateChangedListener> listeners;
+
+    public State(StateValues state) {
+	this.state = state;
+	this.listeners = new ArrayList<StateChangedListener>();
+    }
+
+    public State() {
+	this(StateValues.Unknown);
+    }
+
+    public void addListener(StateChangedListener listener) {
+	listeners.add(listener);
+    }
+
+    public StateValues getState() {
+	return state;
+    }
+
+    public void setState(StateValues newState) {
+	for (StateChangedListener listener : listeners)
+	    listener.stateChanged(state, newState);
+	state = newState;
+    }
+}
+
+public class MainFrame extends JFrame {
     private class DataFilesFilter extends FileFilter {
 	public final static String DESCRIPTION = "Data files (*.tab|*.dat|*.data)";
 
@@ -83,6 +117,32 @@ public class MainFrame extends JFrame {
 	}
     }
 
+    private class SaveAction extends AbstractAction {
+	private JFileChooser fileChooser;
+
+	public SaveAction(JFileChooser fileChooser) {
+	    putValue(NAME, "Save");
+	    this.fileChooser = fileChooser;
+	}
+
+	@Override public void actionPerformed(ActionEvent e) {
+	    System.out.println("Save");
+	}
+    }
+
+    private class SaveAsAction extends AbstractAction {
+	private JFileChooser fileChooser;
+
+	public SaveAsAction(JFileChooser fileChooser) {
+	    putValue(NAME, "Save As...");
+	    this.fileChooser = fileChooser;
+	}
+
+	@Override public void actionPerformed(ActionEvent e) {
+	    System.out.println("Save As...");
+	}
+    }
+
     private class ClusterizeAction extends AbstractAction {
 	public ClusterizeAction() {
 	    putValue(NAME, "Clusterize");
@@ -96,6 +156,7 @@ public class MainFrame extends JFrame {
 		int maxIterations = ((Number) numIterationsField.getValue()).intValue();
 
 		model.clusterize(numClusters, new KFuzzyAlgorithm.Options(blending, maxIterations));
+		state.setState(State.StateValues.Clusterized);
 
 		paintComponent.setClusters(model.getPoints(), model.getClusters());
 		paintComponent.repaint();
@@ -126,22 +187,15 @@ public class MainFrame extends JFrame {
 	try {
 	    KFuzzyInput kfuzzyInput = fileReader.read(new FileReader(filename));
 	    numClustersField.setValue(kfuzzyInput.getNumClusters());
-	    numClustersField.setEnabled(true);
-
-	    blendingField.setEnabled(true);
-	    numIterationsField.setEnabled(true);
 
 	    SetRange(firstIndex, 0, kfuzzyInput.getNumDimensions());
-	    firstIndex.setEnabled(true);
 	    SetRange(secondIndex, 0, kfuzzyInput.getNumDimensions());
-	    secondIndex.setEnabled(true);
 
 	    firstIndex.setSelectedIndex(0);
 	    secondIndex.setSelectedIndex(0);
 
-	    clusterizeButton.setEnabled(true);
-
 	    model.setPoints(kfuzzyInput.getVectors());
+	    state.setState(State.StateValues.Opened);
 
 	    paintComponent.setClusters(model.getPoints(), model.getClusters());
 	    paintComponent.setFirstIndex(0);
@@ -161,21 +215,42 @@ public class MainFrame extends JFrame {
 	open.setMnemonic('O');
 	open.setAccelerator(KeyStroke.getKeyStroke('O', KeyEvent.CTRL_MASK));
 
+	JMenuItem save = new JMenuItem(saveAction);
+	save.setMnemonic('S');
+	save.setAccelerator(KeyStroke.getKeyStroke('S', KeyEvent.CTRL_MASK));
+
+	JMenuItem saveAs = new JMenuItem(saveAsAction);
+
 	JMenuItem quit = new JMenuItem(quitAction);
 	quit.setMnemonic('Q');
 	quit.setAccelerator(KeyStroke.getKeyStroke('Q', KeyEvent.CTRL_MASK));
 
 	file.add(open);
+	file.add(save);
+	file.add(saveAs);
 	file.addSeparator();
 	file.add(quit);
 
 	return file;
     }
 
+    private JMenu createAlgoMenu() {
+	JMenu algo = new JMenu("Algo");
+	algo.setMnemonic('A');
+
+	JMenuItem clusterize = new JMenuItem(clusterizeAction);
+	clusterize.setMnemonic('C');
+	clusterize.setAccelerator(KeyStroke.getKeyStroke('C', KeyEvent.CTRL_MASK));
+
+	algo.add(clusterize);
+
+	return algo;
+    }
+
     private JToolBar createToolBar() {
 	JToolBar toolBar = new JToolBar("Command bar");
 	toolBar.add(new JButton(openAction));
-	toolBar.add(clusterizeButton);
+	toolBar.add(new JButton(clusterizeAction));
 	toolBar.addSeparator();
 
 	toolBar.add(new JLabel("Num clusters: "));
@@ -194,7 +269,7 @@ public class MainFrame extends JFrame {
 	return toolBar;
     }
 
-    private JFileChooser createFileChooser() {
+    private JFileChooser createOpenFileChooser() {
 	JFileChooser fileChooser = new JFileChooser();
 	fileChooser.setDialogTitle("Select data file");
 	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -204,63 +279,83 @@ public class MainFrame extends JFrame {
     }
 
     public MainFrame(Model model) {
+	this.state = new State();
 	this.model = model;
 
-	fileReader = new TABReader();
+	openAction = new OpenAction(createOpenFileChooser());
+	saveAction = new SaveAction(null);
+	saveAsAction = new SaveAsAction(null);
 
-	openAction = new OpenAction(createFileChooser());
-	quitAction = new QuitAction();
+	numClustersField.setValue(new Integer(DEFAULT_NUM_CLUSTERS));
+	blendingField.setValue(new Double(DEFAULT_BLENDING));
+	numIterationsField.setValue(new Integer(DEFAULT_MAX_ITERATIONS));
 
-
-	clusterizeButton = new JButton(new ClusterizeAction());
-	clusterizeButton.setEnabled(false);
-
-	numClustersField = new JFormattedTextField(NumberFormat.getIntegerInstance());
-	numClustersField.setValue(new Integer(1));
-	numClustersField.setEnabled(false);
-
-	blendingField = new JFormattedTextField(NumberFormat.getNumberInstance());
-	blendingField.setValue(new Double(1.5));
-	blendingField.setEnabled(false);
-
-	numIterationsField = new JFormattedTextField(NumberFormat.getIntegerInstance());
-	numIterationsField.setValue(new Integer(1000));
-	numIterationsField.setEnabled(false);
-
-	firstIndex = new JComboBox();
 	firstIndex.addActionListener(new ChangeIndexActionListener(true));
-	secondIndex = new JComboBox();
 	secondIndex.addActionListener(new ChangeIndexActionListener(false));
-
-	firstIndex.setEnabled(false);
-	secondIndex.setEnabled(false);
 
 	setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	setLocationRelativeTo(null);
+	setTitle(TITLE);
 
 	JMenuBar menuBar = new JMenuBar();
 	menuBar.add(createFileMenu());
+	menuBar.add(createAlgoMenu());
 	setJMenuBar(menuBar);
 
 	add(createToolBar(), BorderLayout.NORTH);
-
-	paintComponent = new ClustersPaintComponent();
 	add(paintComponent, BorderLayout.CENTER);
+
+	this.state.addListener(new State.StateChangedListener() {
+		public void stateChanged(State.StateValues oldState, State.StateValues newState) {
+		    boolean enabled = newState == State.StateValues.Opened || newState == State.StateValues.Clusterized;
+
+		    clusterizeAction.setEnabled(enabled);
+
+		    numClustersField.setEnabled(enabled);
+		    blendingField.setEnabled(enabled);
+		    numIterationsField.setEnabled(enabled);
+
+		    firstIndex.setEnabled(enabled);
+		    secondIndex.setEnabled(enabled);
+		}
+	    });
+	this.state.addListener(new State.StateChangedListener() {
+		public void stateChanged(State.StateValues oldState, State.StateValues newState) {
+		    boolean enabled = newState == State.StateValues.Clusterized;
+
+		    saveAction.setEnabled(enabled);
+		    saveAsAction.setEnabled(enabled);
+		}
+	    });
+	this.state.setState(State.StateValues.Unopened);
     }
 
-    private ClustersPaintComponent paintComponent;
+    public final static int DEFAULT_WIDTH = 800;
+    public final static int DEFAULT_HEIGHT = 600;
+    public final static String TITLE = "KFuzzy Algorithm";
+
+    public final static int DEFAULT_NUM_CLUSTERS = 1;
+    public final static double DEFAULT_BLENDING = 1.5;
+    public final static int DEFAULT_MAX_ITERATIONS = 100;
+
+
+    private ClustersPaintComponent paintComponent = new ClustersPaintComponent();
+
     private AbstractAction openAction;
-    private AbstractAction quitAction;
-    private JComboBox firstIndex;
-    private JComboBox secondIndex;
+    private AbstractAction saveAction;
+    private AbstractAction saveAsAction;
+    private AbstractAction quitAction = new QuitAction();
+    private AbstractAction clusterizeAction = new ClusterizeAction();
 
-    private JFormattedTextField numClustersField;
-    private JFormattedTextField blendingField;
-    private JFormattedTextField numIterationsField;
+    private JComboBox firstIndex = new JComboBox();
+    private JComboBox secondIndex = new JComboBox();
 
-    private JButton clusterizeButton;
+    private JFormattedTextField numClustersField = new JFormattedTextField(NumberFormat.getIntegerInstance());
+    private JFormattedTextField blendingField = new JFormattedTextField(NumberFormat.getNumberInstance());
+    private JFormattedTextField numIterationsField = new JFormattedTextField(NumberFormat.getIntegerInstance());
 
-    private ReaderInterface fileReader;
+    private ReaderInterface fileReader = new TABReader();
 
     private Model model;
+    private State state;
 }

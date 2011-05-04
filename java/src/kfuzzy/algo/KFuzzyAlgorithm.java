@@ -2,8 +2,8 @@ package kfuzzy.algo;
 
 import java.util.*;
 
-import kfuzzy.math.Utils;
 import kfuzzy.math.Vector;
+import kfuzzy.utils.MathUtils;
 /**
  * An implementation of the KFuzzy algorithm.
  *
@@ -82,7 +82,7 @@ public class KFuzzyAlgorithm {
 
 	for (int i = 0; i < numClusters; ++i) {
 	    double distance = vector.sub(centers[i]).abs();
-	    if (Utils.EQ(distance, 0))
+	    if (MathUtils.EQ(distance, 0))
 		probabilities[i] = Double.MAX_VALUE;
 	    else
 		probabilities[i] = Math.pow(1.0 / distance, power);

@@ -3,8 +3,8 @@ package kfuzzy.io;
 import java.io.*;
 import java.util.*;
 
-import kfuzzy.math.Utils;
 import kfuzzy.math.Vector;
+import kfuzzy.utils.MathUtils;
 
 
 public class TABReader extends BasicReader implements ReaderInterface {
@@ -26,7 +26,7 @@ public class TABReader extends BasicReader implements ReaderInterface {
 	for (int i = 0; i < numObjects; ++i) {
 	    for (int j = 0; j < numDimensions; ++j) {
 		values[i][j] = nextDouble();
-		if (!Utils.EQ(values[i][j], unknownValue)) {
+		if (!MathUtils.EQ(values[i][j], unknownValue)) {
 		    sumComponents[j] += values[i][j];
 		    ++totalKnown[j];
 		}
@@ -43,7 +43,7 @@ public class TABReader extends BasicReader implements ReaderInterface {
 
 	for (int i = 0; i < numObjects; ++i) {
 	    for (int j = 0; j < numDimensions; ++j)
-		if (Utils.EQ(values[i][j], unknownValue))
+		if (MathUtils.EQ(values[i][j], unknownValue))
 		    values[i][j] = sumComponents[j];
 	    vectors[i] = new Vector(values[i]);
 	}

@@ -1,9 +1,15 @@
-package kfuzzy.math;
+package kfuzzy.utils;
 
 import java.util.*;
 
-
-public class Utils {
+/**
+ * Contains several common math constants and functions
+ *
+ * @author Yuri Gorshenin
+ * @version 2011.0505
+ * @since 1.6
+ */
+public class MathUtils {
     /**
      * Power of floating-point comparator
      */

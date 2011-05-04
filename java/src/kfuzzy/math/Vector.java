@@ -3,7 +3,7 @@ package kfuzzy.math;
 
 import java.util.*;
 
-import kfuzzy.math.Utils;
+import kfuzzy.utils.MathUtils;
 
 /**
  * Class Vector represents multidimensional vector in the Eucldian space.
@@ -113,7 +113,7 @@ public class Vector {
 	for (double d : components)
 	    largest = Math.max(largest, Math.abs(d));
 
-	if (!Utils.EQ(ZERO, largest)) {
+	if (!MathUtils.EQ(ZERO, largest)) {
 	    double t;
 	    for (double d : components) {
 		t = d / largest;
@@ -139,7 +139,7 @@ public class Vector {
 	if (getSize() != other.getSize())
 	    return false;
 	for (int i = 0; i < getSize(); ++i)
-	    if (!Utils.EQ(get(i), other.get(i)))
+	    if (!MathUtils.EQ(get(i), other.get(i)))
 		return false;
 	return true;
     }
