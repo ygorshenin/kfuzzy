@@ -13,9 +13,9 @@ public interface ReaderInterface {
     /**
      * Reads from input stream all data necessary to KFuzzy algorithm.
      *
-     * @param in input stream
-     * @return input to KFuzzy algorithm
+     * @param inputStream an input stream
+     * @return input to KFuzzy algorithm (or null in the case of failure)
      * @throws IOException in the case of problems with IO
      */
-    KFuzzyInput read(InputStreamReader in) throws IOException;
+    KFuzzyInput read(InputStreamReader inputStream) throws IOException;
 }

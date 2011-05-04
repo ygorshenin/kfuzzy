@@ -28,8 +28,8 @@ import kfuzzy.math.Vector;
  * @since 1.6
  */
 public class SimpleReader extends BasicReader implements ReaderInterface {
-    public KFuzzyInput read(InputStreamReader in) throws IOException {
-	initialize(in);
+    public KFuzzyInput read(InputStreamReader inputStream) throws IOException {
+	initialize(inputStream);
 
 	int numObjects = nextInt(), numDimensions = nextInt(), numClusters = nextInt();
 
