@@ -3,6 +3,9 @@ package kfuzzy.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
@@ -13,8 +16,9 @@ import kfuzzy.algo.KFuzzyAlgorithm;
 import kfuzzy.gui.ClustersPaintComponent;
 import kfuzzy.io.KFuzzyInput;
 import kfuzzy.io.ReaderInterface;
-import kfuzzy.io.SimpleReader;
+import kfuzzy.io.SimpleWriter;
 import kfuzzy.io.TABReader;
+import kfuzzy.io.WriterInterface;
 import kfuzzy.math.Vector;
 
 
@@ -56,12 +60,26 @@ class State {
 
 public class MainFrame extends JFrame {
     private class DataFilesFilter extends FileFilter {
-	public final static String DESCRIPTION = "Data files (*.tab|*.dat|*.data)";
+	public final static String DESCRIPTION = "Data files (*.tab)";
 
 	public boolean accept(java.io.File file) {
 	    if (file.isDirectory())
 		return true;
-	    return file.getName().endsWith("tab") || file.getName().endsWith("data") || file.getName().endsWith("dat");
+	    return file.getName().endsWith("tab");
+	}
+
+	public String getDescription() {
+	    return DESCRIPTION;
+	}
+    }
+
+    private class OutputFilesFilter extends FileFilter {
+	public final static String DESCRIPTION = "Text files (*.txt)";
+
+	public boolean accept(java.io.File file) {
+	    if (file.isDirectory())
+		return true;
+	    return file.getName().endsWith("txt");
 	}
 
 	public String getDescription() {
@@ -109,7 +127,7 @@ public class MainFrame extends JFrame {
 	    if (result == JFileChooser.APPROVE_OPTION) {
 		String path = fileChooser.getSelectedFile().getPath();
 		if (exists(path))
-		    openFile(path);
+		    openDispatcher(path);
 		else
 		    JOptionPane.showMessageDialog(MainFrame.this, fileChooser.getSelectedFile() + " doesn't exists", "error",
 						  JOptionPane.ERROR_MESSAGE);
@@ -126,7 +144,10 @@ public class MainFrame extends JFrame {
 	}
 
 	@Override public void actionPerformed(ActionEvent e) {
-	    System.out.println("Save");
+	    if (lastFile == null)
+		saveAsDispatcher(fileChooser);
+	    else
+		saveDispatcher(lastFile);
 	}
     }
 
@@ -139,7 +160,7 @@ public class MainFrame extends JFrame {
 	}
 
 	@Override public void actionPerformed(ActionEvent e) {
-	    System.out.println("Save As...");
+	    saveAsDispatcher(fileChooser);
 	}
     }
 
@@ -161,8 +182,7 @@ public class MainFrame extends JFrame {
 		paintComponent.setClusters(model.getPoints(), model.getClusters());
 		paintComponent.repaint();
 	    } catch (Exception e) {
-		JOptionPane.showMessageDialog(MainFrame.this, String.format("Can't clusterize: %s", e.getMessage()), "error",
-					      JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(MainFrame.this, "Can't clusterize data", "error", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
     }
@@ -183,9 +203,42 @@ public class MainFrame extends JFrame {
 	    comboBox.addItem(new Integer(i));
     }
 
-    private void openFile(String filename) {
+    private void saveAsDispatcher(JFileChooser fileChooser) {
+	int result = fileChooser.showSaveDialog(this);
+	if (result == JFileChooser.APPROVE_OPTION)
+	    saveDispatcher(fileChooser.getSelectedFile().getPath());
+    }
+
+    private void saveDispatcher(String filename) {
+	OutputStreamWriter out = null;
 	try {
-	    KFuzzyInput kfuzzyInput = fileReader.read(new FileReader(filename));
+	    out = new FileWriter(filename);
+	    if (!fileWriter.write(out, model.getOutput()))
+		throw new Exception("Can't write output");
+
+	    lastFile = filename;
+	} catch (Exception e) {
+	    JOptionPane.showMessageDialog(MainFrame.this, String.format("Can't write output to file: %s", filename), "error",
+					  JOptionPane.ERROR_MESSAGE);
+	    e.printStackTrace();
+	} finally {
+	    if (out != null)
+		try {
+		    out.close();
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	}
+    }
+
+    private void openDispatcher(String filename) {
+	InputStreamReader in = null;
+	try {
+	    in = new FileReader(filename);
+	    KFuzzyInput kfuzzyInput = fileReader.read(in);
+	    if (kfuzzyInput == null)
+		throw new Exception("can't process input file");
+
 	    numClustersField.setValue(kfuzzyInput.getNumClusters());
 
 	    SetRange(firstIndex, 0, kfuzzyInput.getNumDimensions());
@@ -195,15 +248,25 @@ public class MainFrame extends JFrame {
 	    secondIndex.setSelectedIndex(0);
 
 	    model.setPoints(kfuzzyInput.getVectors());
-	    state.setState(State.StateValues.Opened);
 
 	    paintComponent.setClusters(model.getPoints(), model.getClusters());
 	    paintComponent.setFirstIndex(0);
 	    paintComponent.setSecondIndex(0);
 	    paintComponent.repaint();
+
+	    lastFile = null;
+
+	    state.setState(State.StateValues.Opened);
 	} catch (Exception e) {
 	    JOptionPane.showMessageDialog(MainFrame.this, String.format("Can't process file %s", filename), "error", JOptionPane.ERROR_MESSAGE);
 	    e.printStackTrace();
+	} finally {
+	    if (in != null)
+		try {
+		    in.close();
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
 	}
     }
 
@@ -278,13 +341,24 @@ public class MainFrame extends JFrame {
 	return fileChooser;
     }
 
+    private JFileChooser createSaveFileChooser() {
+	JFileChooser fileChooser = new JFileChooser();
+	fileChooser.setDialogTitle("Select file for saving results");
+	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	fileChooser.addChoosableFileFilter(new OutputFilesFilter());
+
+	return fileChooser;
+    }
+
     public MainFrame(Model model) {
 	this.state = new State();
 	this.model = model;
 
 	openAction = new OpenAction(createOpenFileChooser());
-	saveAction = new SaveAction(null);
-	saveAsAction = new SaveAsAction(null);
+
+	JFileChooser saveFileChooser = createSaveFileChooser();
+	saveAction = new SaveAction(saveFileChooser);
+	saveAsAction = new SaveAsAction(saveFileChooser);
 
 	numClustersField.setValue(new Integer(DEFAULT_NUM_CLUSTERS));
 	blendingField.setValue(new Double(DEFAULT_BLENDING));
@@ -355,7 +429,10 @@ public class MainFrame extends JFrame {
     private JFormattedTextField numIterationsField = new JFormattedTextField(NumberFormat.getIntegerInstance());
 
     private ReaderInterface fileReader = new TABReader();
+    private WriterInterface fileWriter = new SimpleWriter();
 
     private Model model;
     private State state;
+
+    private String lastFile = null;
 }
